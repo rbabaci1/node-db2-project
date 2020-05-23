@@ -71,7 +71,8 @@ router.delete("/:id", validateId, async (req, res, next) => {
     });
   }
 });
-// validations middleware
+
+/*********************  validations middleware  ********************/
 async function validateId(req, res, next) {
   try {
     const { id } = req.params;
