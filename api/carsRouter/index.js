@@ -2,12 +2,13 @@ const express = require("express");
 
 const router = express.Router();
 const { insert, get } = require("../../data/helpers");
+const { getUndefinedProps } = require("../utils");
 
 router.post("/", validateBody, async ({ body }, res, next) => {
   try {
-    const addedCar = await inserts(body);
-
-    res.status(201).json(addedCar);
+    // const addedCar = await inserts(body);
+    console.log("made to post!!!");
+    // res.status(201).json(addedCar);
   } catch ({ errno, code, message }) {
     next({
       message: "The car could not be added at this moment.",
@@ -35,14 +36,17 @@ router.get("/", async (req, res, next) => {
 
 // validations middleware
 function validateBody({ body }, res, next) {
-  const { VIN, make, model, mileage } = body;
+  const { vin, make, model, mileage } = body;
+  const results = getUndefinedProps({ vin, make, model, mileage });
 
-  if (!body) {
-    res.status(400).json({
-      message: `Some info in the body is missing or incorrectly defined.`,
-    });
-  } else {
+  if (!results) {
     next();
+  } else {
+    res.status(400).json({
+      message: `👉🏼 [${results.join(
+        " | "
+      )}] 👈🏼 missing or incorrectly defined in the request body.`,
+    });
   }
 }
 module.exports = router;
