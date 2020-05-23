@@ -1,5 +1,5 @@
 const db = require("../dbConfig");
 
-const get = () => db.get("cars");
+const get = () => db("cars");
 
 module.exports = { get };
