@@ -1,14 +1,15 @@
 const express = require("express");
 
 const router = express.Router();
-const { insert, get } = require("../../data/helpers");
+const { insert, get, getById } = require("../../data/helpers");
 const { getUndefinedProps } = require("../utils");
 
 router.post("/", validateBody, async ({ body }, res, next) => {
   try {
-    const [addedCar] = await insert(body);
+    const [addedCarId] = await insert(body);
+    const [addedCar] = await getById(addedCarId);
 
-    res.status(201).json(addedCar);
+    res.status(201).json({ addedCar });
   } catch ({ errno, code, message }) {
     next({
       message: "The car could not be added at this moment.",

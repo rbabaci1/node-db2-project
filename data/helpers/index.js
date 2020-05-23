@@ -2,6 +2,6 @@ const db = require("../dbConfig");
 
 const insert = newCar => db("cars").insert(newCar);
 const get = () => db("cars");
-const getById = id => db("cars").where({ id });
+const getById = car_id => db("cars").where({ car_id });
 
 module.exports = { insert, get, getById };
