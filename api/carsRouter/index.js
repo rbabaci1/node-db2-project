@@ -6,9 +6,9 @@ const { getUndefinedProps } = require("../utils");
 
 router.post("/", validateBody, async ({ body }, res, next) => {
   try {
-    // const addedCar = await inserts(body);
-    console.log("made to post!!!");
-    // res.status(201).json(addedCar);
+    const [addedCar] = await insert(body);
+
+    res.status(201).json(addedCar);
   } catch ({ errno, code, message }) {
     next({
       message: "The car could not be added at this moment.",
