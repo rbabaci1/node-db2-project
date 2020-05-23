@@ -35,7 +35,32 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.put("/:id", validateId, validateBody, async (req, res, next) => {});
+router.delete("/:id", async (req, res, next) => {});
+
 // validations middleware
+async function validateId(req, res, next) {
+  try {
+    const { id } = req.params;
+    const [car] = await getById(id);
+
+    if (car) {
+      req.car = car;
+      next();
+    } else {
+      next({
+        status: 404,
+        message: `The car with the specified ID does not exist.`,
+      });
+    }
+  } catch (err) {
+    next({
+      error: `The car info could not be retrieved at this moment.`,
+      reason: err.message,
+    });
+  }
+}
+
 function validateBody({ body }, res, next) {
   const { vin, make, model, mileage } = body;
   const results = getUndefinedProps({ vin, make, model, mileage });
@@ -44,9 +69,9 @@ function validateBody({ body }, res, next) {
     next();
   } else {
     res.status(400).json({
-      message: `👉🏼 [${results.join(
+      message: `👉🏼 [ ${results.join(
         " | "
-      )}] 👈🏼 missing or incorrectly defined in the request body.`,
+      )} ] 👈🏼 missing or incorrectly defined in the request body.`,
     });
   }
 }
