@@ -3,9 +3,19 @@ const express = require("express");
 const router = express.Router();
 const { insert, get } = require("../../data/helpers");
 
-router.post("/", async (req, res, next) => {
+router.post("/", validateBody, async ({ body }, res, next) => {
   try {
-  } catch (error) {}
+    const addedCar = await inserts(body);
+
+    res.status(201).json(addedCar);
+  } catch ({ errno, code, message }) {
+    next({
+      message: "The car could not be added at this moment.",
+      errno,
+      code,
+      reason: message,
+    });
+  }
 });
 
 router.get("/", async (req, res, next) => {
@@ -23,4 +33,16 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// validations middleware
+function validateBody({ body }, res, next) {
+  const { VIN, make, model, mileage } = body;
+
+  if (!body) {
+    res.status(400).json({
+      message: `Some info in the body is missing or incorrectly defined.`,
+    });
+  } else {
+    next();
+  }
+}
 module.exports = router;
