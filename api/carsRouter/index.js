@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-const { insert, get, getById } = require("../../data/helpers");
+const { insert, get, getById, update, remove } = require("../../data/helpers");
 const { getUndefinedProps } = require("../utils");
 
 router.post("/", validateBody, async ({ body }, res, next) => {
@@ -35,9 +35,42 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.put("/:id", validateId, validateBody, async (req, res, next) => {});
-router.delete("/:id", async (req, res, next) => {});
+router.put("/:id", validateId, validateBody, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    const changes = req.body;
 
+    await update(id, changes);
+
+    res.status(200).json({
+      previous_car: req.car,
+      updated_car: { id, ...changes },
+    });
+  } catch ({ errno, code, message }) {
+    next({
+      message: "The car could not be updated at this moment.",
+      errno,
+      code,
+      reason: message,
+    });
+  }
+});
+
+router.delete("/:id", validateId, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const [carToRemove] = await getById(id);
+
+    await remove(id);
+
+    res.status(200).json({ removed_car: carToRemove });
+  } catch (err) {
+    next({
+      error: "The car could not be removed at this moment.",
+      reason: err.message,
+    });
+  }
+});
 // validations middleware
 async function validateId(req, res, next) {
   try {
