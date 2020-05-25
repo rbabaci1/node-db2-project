@@ -6,8 +6,8 @@ const { getUndefinedProps } = require("../utils");
 
 router.post("/", validateBody, async ({ body }, res, next) => {
   try {
-    const [addedCarId] = await insert(body);
-    const [addedCar] = await getById(addedCarId);
+    const addedCarId = await insert(body);
+    const addedCar = await getById(addedCarId);
 
     res.status(201).json({ addedCar });
   } catch ({ errno, code, message }) {
@@ -59,7 +59,7 @@ router.put("/:id", validateId, validateBody, async (req, res, next) => {
 router.delete("/:id", validateId, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const [carToRemove] = await getById(id);
+    const carToRemove = await getById(id);
 
     await remove(id);
 
@@ -76,7 +76,7 @@ router.delete("/:id", validateId, async (req, res, next) => {
 async function validateId(req, res, next) {
   try {
     const { id } = req.params;
-    const [car] = await getById(id);
+    const car = await getById(id);
 
     if (car) {
       req.car = car;
