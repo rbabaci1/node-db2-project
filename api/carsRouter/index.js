@@ -6,7 +6,7 @@ const { getUndefinedProps } = require("../utils");
 
 router.post("/", validateBody, async ({ body }, res, next) => {
   try {
-    const addedCarId = await insert(body);
+    const [addedCarId] = await insert(body);
     const addedCar = await getById(addedCarId);
 
     res.status(201).json({ addedCar });
