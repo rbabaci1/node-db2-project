@@ -1,4 +1,0 @@
--- SQLite
-SELECT
-  *
-FROM sales;
