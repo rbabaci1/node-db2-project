@@ -1,3 +1,3 @@
-Select
+SELECT
   *
 from cars;
